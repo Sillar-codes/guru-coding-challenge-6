@@ -2,6 +2,7 @@ import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 import { DeleteCommand } from '@aws-sdk/lib-dynamodb';
 import { ddbDocClient } from '../utils/dynamodb';
 import { ApiResponse } from '../types/item';
+import { DYNAMO_TABLE } from '../config';
 
 export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   try {
@@ -15,7 +16,7 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
     }
 
     const command = new DeleteCommand({
-      TableName: process.env.TABLE_NAME,
+      TableName: DYNAMO_TABLE,
       Key: { itemId },
       ReturnValues: 'ALL_OLD',
     });

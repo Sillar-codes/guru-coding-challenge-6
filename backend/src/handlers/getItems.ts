@@ -2,11 +2,12 @@ import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 import { ScanCommand } from '@aws-sdk/lib-dynamodb';
 import { ddbDocClient } from '../utils/dynamodb';
 import { Item, ApiResponse } from '../types/item';
+import { DYNAMO_TABLE } from '../config';
 
 export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   try {
     const command = new ScanCommand({
-      TableName: process.env.TABLE_NAME,
+      TableName: DYNAMO_TABLE,
     });
 
     const result = await ddbDocClient.send(command);

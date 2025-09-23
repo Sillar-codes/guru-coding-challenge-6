@@ -3,6 +3,7 @@ import { PutCommand } from '@aws-sdk/lib-dynamodb';
 import { v4 as uuidv4 } from 'uuid';
 import { ddbDocClient } from '../utils/dynamodb';
 import { CreateItemRequest, Item, ApiResponse } from '../types/item';
+import { DYNAMO_TABLE } from '../config';
 
 export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   try {
@@ -37,7 +38,7 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
     };
 
     await ddbDocClient.send(new PutCommand({
-      TableName: process.env.TABLE_NAME,
+      TableName: DYNAMO_TABLE,
       Item: newItem,
     }));
 
