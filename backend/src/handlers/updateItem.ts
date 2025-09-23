@@ -2,6 +2,7 @@ import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 import { UpdateCommand } from '@aws-sdk/lib-dynamodb';
 import { ddbDocClient } from '../utils/dynamodb';
 import { UpdateItemRequest, Item, ApiResponse } from '../types/item';
+import { DYNAMO_TABLE } from '../config';
 
 export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   try {
@@ -48,7 +49,7 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
     expressionAttributeValues[':updatedAt'] = timestamp;
 
     const command = new UpdateCommand({
-      TableName: process.env.TABLE_NAME,
+      TableName: DYNAMO_TABLE,
       Key: { itemId },
       UpdateExpression: `SET ${updateExpression.join(', ')}`,
       ExpressionAttributeNames: expressionAttributeNames,
