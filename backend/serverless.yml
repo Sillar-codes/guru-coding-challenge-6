@@ -5,11 +5,14 @@ frameworkVersion: "3"
 provider:
   name: aws
   runtime: nodejs18.x
-  region: us-east-1
+  region: ${opt:region, 'us-west-1'}
   stage: ${opt:stage, 'dev'}
   environment:
     TABLE_NAME: !Ref ItemsTable
     STAGE: ${self:provider.stage}
+    REGION: ${self:provider.region}
+    USER_POOL_ID: { Ref: CognitoUserPool }
+    USER_POOL_CLIENT_ID: { Ref: CognitoUserPoolClient }
   iam:
     role:
       statements:
@@ -23,6 +26,16 @@ provider:
             - dynamodb:DeleteItem
           Resource:
             - !GetAtt ItemsTable.Arn
+        - Effect: Allow
+          Action:
+            - cognito-idp:AdminInitiateAuth
+            - cognito-idp:AdminCreateUser
+            - cognito-idp:AdminSetUserPassword
+            - cognito-idp:AdminDeleteUser
+            - cognito-idp:AdminGetUser
+            - cognito-idp:GetUser
+          Resource:
+            - !GetAtt CognitoUserPool.Arn
 
 custom:
   stages:
@@ -43,36 +56,108 @@ resources:
           - AttributeName: itemId
             KeyType: HASH
         BillingMode: PAY_PER_REQUEST
-        StreamSpecification:
-          StreamViewType: NEW_AND_OLD_IMAGES
+
+    CognitoUserPool:
+      Type: AWS::Cognito::UserPool
+      Properties:
+        UserPoolName: crud-user-pool-${self:provider.stage}
+        UsernameAttributes:
+          - email
+        AutoVerifiedAttributes:
+          - email
+        Policies:
+          PasswordPolicy:
+            MinimumLength: 8
+            RequireUppercase: true
+            RequireLowercase: true
+            RequireNumbers: true
+            RequireSymbols: true
+        Schema:
+          - Name: email
+            Required: true
+            Mutable: true
+          - Name: name
+            Required: true
+            Mutable: true
+
+    CognitoUserPoolClient:
+      Type: AWS::Cognito::UserPoolClient
+      Properties:
+        UserPoolId: { Ref: CognitoUserPool }
+        ClientName: crud-app-client-${self:provider.stage}
+        ExplicitAuthFlows:
+          - ADMIN_NO_SRP_AUTH
+          - USER_PASSWORD_AUTH
+        GenerateSecret: false
+
+  Outputs:
+    UserPoolId:
+      Value: { Ref: CognitoUserPool }
+    UserPoolClientId:
+      Value: { Ref: CognitoUserPoolClient }
 
 functions:
+  allItems:
+    handler: src/handlers/items/all.handler
+    events:
+      - http:
+          path: items/all
+          method: get
+          cors: true
+
+  signUp:
+    handler: src/handlers/auth/signUp.handler
+    events:
+      - http:
+          path: auth/signup
+          method: post
+          cors: true
+
+  signIn:
+    handler: src/handlers/auth/signIn.handler
+    events:
+      - http:
+          path: auth/signin
+          method: post
+          cors: true
+
+  getCurrentUser:
+    handler: src/handlers/auth/getCurrentUser.handler
+    events:
+      - http:
+          path: auth/me
+          method: get
+          cors: true
+          authorizer:
+            name: authorizer
+            type: request
+
   createItem:
-    handler: src/handlers/createItem.handler
+    handler: src/handlers/items/create.handler
     events:
       - http:
           path: items
           method: post
           cors: true
 
-  getItems:
-    handler: src/handlers/getItems.handler
-    events:
-      - http:
-          path: items
-          method: get
-          cors: true
-
   getItem:
-    handler: src/handlers/getItem.handler
+    handler: src/handlers/items/get.handler
     events:
       - http:
           path: items/{id}
           method: get
           cors: true
 
+  listItems:
+    handler: src/handlers/items/list.handler
+    events:
+      - http:
+          path: items
+          method: get
+          cors: true
+
   updateItem:
-    handler: src/handlers/updateItem.handler
+    handler: src/handlers/items/update.handler
     events:
       - http:
           path: items/{id}
@@ -80,12 +165,15 @@ functions:
           cors: true
 
   deleteItem:
-    handler: src/handlers/deleteItem.handler
+    handler: src/handlers/items/delete.handler
     events:
       - http:
           path: items/{id}
           method: delete
           cors: true
+
+  authorizer:
+    handler: src/handlers/auth/authorizer.handler
 
 plugins:
   - serverless-plugin-typescript

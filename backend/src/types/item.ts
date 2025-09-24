@@ -1,5 +1,6 @@
 export interface Item {
   itemId: string;
+  userId: string;
   name: string;
   description: string;
   price: number;
@@ -25,5 +26,9 @@ export interface UpdateItemRequest {
 export interface ApiResponse<T> {
   statusCode: number;
   body: T;
-  message?: string;
+}
+
+export interface ErrorResponse {
+  error: string;
+  message: string;
 }
