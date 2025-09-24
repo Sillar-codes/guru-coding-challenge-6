@@ -1,13 +1,12 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 import { ScanCommand } from '@aws-sdk/lib-dynamodb';
-import { ddbDocClient } from '../utils/dynamodb';
-import { Item, ApiResponse } from '../types/item';
-import { DYNAMO_TABLE } from '../config';
+import { ddbDocClient } from '../../utils/dynamodb';
+import { Item, ApiResponse } from '../../types/item';
 
-export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
+export const handler = async (_: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   try {
     const command = new ScanCommand({
-      TableName: DYNAMO_TABLE,
+      TableName: process.env.TABLE_NAME,
     });
 
     const result = await ddbDocClient.send(command);
@@ -28,8 +27,8 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
       body: JSON.stringify({ 
         message: 'Internal server error',
         statusCode: 500,
-        body: null
-      } as ApiResponse<null>),
+        body: (error as Error).message
+      } as ApiResponse<string>),
     };
   }
 };

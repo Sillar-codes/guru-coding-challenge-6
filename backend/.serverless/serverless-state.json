@@ -7,7 +7,7 @@
     "provider": {
       "name": "aws",
       "runtime": "nodejs18.x",
-      "region": "us-east-1",
+      "region": "us-west-1",
       "stage": "dev",
       "environment": {
         "TABLE_NAME": {
@@ -114,34 +114,10 @@
               }
             }
           },
-          "CreateItemLogGroup": {
-            "Type": "AWS::Logs::LogGroup",
-            "Properties": {
-              "LogGroupName": "/aws/lambda/crud-api-dev-createItem"
-            }
-          },
           "GetItemsLogGroup": {
             "Type": "AWS::Logs::LogGroup",
             "Properties": {
               "LogGroupName": "/aws/lambda/crud-api-dev-getItems"
-            }
-          },
-          "GetItemLogGroup": {
-            "Type": "AWS::Logs::LogGroup",
-            "Properties": {
-              "LogGroupName": "/aws/lambda/crud-api-dev-getItem"
-            }
-          },
-          "UpdateItemLogGroup": {
-            "Type": "AWS::Logs::LogGroup",
-            "Properties": {
-              "LogGroupName": "/aws/lambda/crud-api-dev-updateItem"
-            }
-          },
-          "DeleteItemLogGroup": {
-            "Type": "AWS::Logs::LogGroup",
-            "Properties": {
-              "LogGroupName": "/aws/lambda/crud-api-dev-deleteItem"
             }
           },
           "IamRoleLambdaExecution": {
@@ -225,39 +201,6 @@
               }
             }
           },
-          "CreateItemLambdaFunction": {
-            "Type": "AWS::Lambda::Function",
-            "Properties": {
-              "Code": {
-                "S3Bucket": {
-                  "Ref": "ServerlessDeploymentBucket"
-                },
-                "S3Key": "serverless/crud-api/dev/1758645587157-2025-09-23T16:39:47.157Z/crud-api.zip"
-              },
-              "Handler": "src/handlers/createItem.handler",
-              "Runtime": "nodejs18.x",
-              "FunctionName": "crud-api-dev-createItem",
-              "MemorySize": 1024,
-              "Timeout": 6,
-              "Environment": {
-                "Variables": {
-                  "TABLE_NAME": {
-                    "$ref": "$[\"service\"][\"provider\"][\"environment\"][\"TABLE_NAME\"]"
-                  },
-                  "STAGE": "dev"
-                }
-              },
-              "Role": {
-                "Fn::GetAtt": [
-                  "IamRoleLambdaExecution",
-                  "Arn"
-                ]
-              }
-            },
-            "DependsOn": [
-              "CreateItemLogGroup"
-            ]
-          },
           "GetItemsLambdaFunction": {
             "Type": "AWS::Lambda::Function",
             "Properties": {
@@ -265,9 +208,9 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/crud-api/dev/1758645587157-2025-09-23T16:39:47.157Z/crud-api.zip"
+                "S3Key": "serverless/crud-api/dev/1758698097649-2025-09-24T07:14:57.649Z/crud-api.zip"
               },
-              "Handler": "src/handlers/getItems.handler",
+              "Handler": "src/handlers/items/all.handler",
               "Runtime": "nodejs18.x",
               "FunctionName": "crud-api-dev-getItems",
               "MemorySize": 1024,
@@ -291,153 +234,14 @@
               "GetItemsLogGroup"
             ]
           },
-          "GetItemLambdaFunction": {
-            "Type": "AWS::Lambda::Function",
-            "Properties": {
-              "Code": {
-                "S3Bucket": {
-                  "Ref": "ServerlessDeploymentBucket"
-                },
-                "S3Key": "serverless/crud-api/dev/1758645587157-2025-09-23T16:39:47.157Z/crud-api.zip"
-              },
-              "Handler": "src/handlers/getItem.handler",
-              "Runtime": "nodejs18.x",
-              "FunctionName": "crud-api-dev-getItem",
-              "MemorySize": 1024,
-              "Timeout": 6,
-              "Environment": {
-                "Variables": {
-                  "TABLE_NAME": {
-                    "$ref": "$[\"service\"][\"provider\"][\"environment\"][\"TABLE_NAME\"]"
-                  },
-                  "STAGE": "dev"
-                }
-              },
-              "Role": {
-                "Fn::GetAtt": [
-                  "IamRoleLambdaExecution",
-                  "Arn"
-                ]
-              }
-            },
-            "DependsOn": [
-              "GetItemLogGroup"
-            ]
-          },
-          "UpdateItemLambdaFunction": {
-            "Type": "AWS::Lambda::Function",
-            "Properties": {
-              "Code": {
-                "S3Bucket": {
-                  "Ref": "ServerlessDeploymentBucket"
-                },
-                "S3Key": "serverless/crud-api/dev/1758645587157-2025-09-23T16:39:47.157Z/crud-api.zip"
-              },
-              "Handler": "src/handlers/updateItem.handler",
-              "Runtime": "nodejs18.x",
-              "FunctionName": "crud-api-dev-updateItem",
-              "MemorySize": 1024,
-              "Timeout": 6,
-              "Environment": {
-                "Variables": {
-                  "TABLE_NAME": {
-                    "$ref": "$[\"service\"][\"provider\"][\"environment\"][\"TABLE_NAME\"]"
-                  },
-                  "STAGE": "dev"
-                }
-              },
-              "Role": {
-                "Fn::GetAtt": [
-                  "IamRoleLambdaExecution",
-                  "Arn"
-                ]
-              }
-            },
-            "DependsOn": [
-              "UpdateItemLogGroup"
-            ]
-          },
-          "DeleteItemLambdaFunction": {
-            "Type": "AWS::Lambda::Function",
-            "Properties": {
-              "Code": {
-                "S3Bucket": {
-                  "Ref": "ServerlessDeploymentBucket"
-                },
-                "S3Key": "serverless/crud-api/dev/1758645587157-2025-09-23T16:39:47.157Z/crud-api.zip"
-              },
-              "Handler": "src/handlers/deleteItem.handler",
-              "Runtime": "nodejs18.x",
-              "FunctionName": "crud-api-dev-deleteItem",
-              "MemorySize": 1024,
-              "Timeout": 6,
-              "Environment": {
-                "Variables": {
-                  "TABLE_NAME": {
-                    "$ref": "$[\"service\"][\"provider\"][\"environment\"][\"TABLE_NAME\"]"
-                  },
-                  "STAGE": "dev"
-                }
-              },
-              "Role": {
-                "Fn::GetAtt": [
-                  "IamRoleLambdaExecution",
-                  "Arn"
-                ]
-              }
-            },
-            "DependsOn": [
-              "DeleteItemLogGroup"
-            ]
-          },
-          "CreateItemLambdaVersionpMrx297UGs5ljnOCbb06rVmEn5lTArT7vrrGyfvI": {
-            "Type": "AWS::Lambda::Version",
-            "DeletionPolicy": "Retain",
-            "Properties": {
-              "FunctionName": {
-                "Ref": "CreateItemLambdaFunction"
-              },
-              "CodeSha256": "qX3YR8bQIwSK3pPbC7MQavmw9N5Qo+KBMDcQh/1Ogys="
-            }
-          },
-          "GetItemsLambdaVersionRf3KqQZd5uIzH447WEZ2NqSs2kClLjpUNG25GEK0BU": {
+          "GetItemsLambdaVersioner8UW3zYvuhyWSi5y6fPnKoKpd68c8KG1eAbeLevTE": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "GetItemsLambdaFunction"
               },
-              "CodeSha256": "qX3YR8bQIwSK3pPbC7MQavmw9N5Qo+KBMDcQh/1Ogys="
-            }
-          },
-          "GetItemLambdaVersionzcU8Ou4enYf7K00ZqyZEKK0o56bXME4Mo5nb0qYFE": {
-            "Type": "AWS::Lambda::Version",
-            "DeletionPolicy": "Retain",
-            "Properties": {
-              "FunctionName": {
-                "Ref": "GetItemLambdaFunction"
-              },
-              "CodeSha256": "qX3YR8bQIwSK3pPbC7MQavmw9N5Qo+KBMDcQh/1Ogys="
-            }
-          },
-          "UpdateItemLambdaVersionJaPtnGiNMWjD8b5Pmh65ZLR34qzLQPhCaGuCFwXHRvQ": {
-            "Type": "AWS::Lambda::Version",
-            "DeletionPolicy": "Retain",
-            "Properties": {
-              "FunctionName": {
-                "Ref": "UpdateItemLambdaFunction"
-              },
-              "CodeSha256": "qX3YR8bQIwSK3pPbC7MQavmw9N5Qo+KBMDcQh/1Ogys="
-            }
-          },
-          "DeleteItemLambdaVersionEpMBoWOzbpDZd6wUJHVX0dZ78kJrpocc10Sh9GK7k": {
-            "Type": "AWS::Lambda::Version",
-            "DeletionPolicy": "Retain",
-            "Properties": {
-              "FunctionName": {
-                "Ref": "DeleteItemLambdaFunction"
-              },
-              "CodeSha256": "qX3YR8bQIwSK3pPbC7MQavmw9N5Qo+KBMDcQh/1Ogys="
+              "CodeSha256": "t2IILsRp9ypfhCOkEIDMuC9swQxfbnw7rd45KZAaUps="
             }
           },
           "ApiGatewayRestApi": {
@@ -462,18 +266,6 @@
                 ]
               },
               "PathPart": "items",
-              "RestApiId": {
-                "Ref": "ApiGatewayRestApi"
-              }
-            }
-          },
-          "ApiGatewayResourceItemsIdVar": {
-            "Type": "AWS::ApiGateway::Resource",
-            "Properties": {
-              "ParentId": {
-                "Ref": "ApiGatewayResourceItems"
-              },
-              "PathPart": "{id}",
               "RestApiId": {
                 "Ref": "ApiGatewayRestApi"
               }
@@ -508,7 +300,7 @@
                     "ResponseParameters": {
                       "method.response.header.Access-Control-Allow-Origin": "'*'",
                       "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent,X-Amzn-Trace-Id'",
-                      "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,POST'"
+                      "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET'"
                     },
                     "ResponseTemplates": {
                       "application/json": ""
@@ -523,97 +315,6 @@
                 "Ref": "ApiGatewayRestApi"
               }
             }
-          },
-          "ApiGatewayMethodItemsIdVarOptions": {
-            "Type": "AWS::ApiGateway::Method",
-            "Properties": {
-              "AuthorizationType": "NONE",
-              "HttpMethod": "OPTIONS",
-              "MethodResponses": [
-                {
-                  "StatusCode": "200",
-                  "ResponseParameters": {
-                    "method.response.header.Access-Control-Allow-Origin": true,
-                    "method.response.header.Access-Control-Allow-Headers": true,
-                    "method.response.header.Access-Control-Allow-Methods": true
-                  },
-                  "ResponseModels": {}
-                }
-              ],
-              "RequestParameters": {},
-              "Integration": {
-                "Type": "MOCK",
-                "RequestTemplates": {
-                  "application/json": "{statusCode:200}"
-                },
-                "ContentHandling": "CONVERT_TO_TEXT",
-                "IntegrationResponses": [
-                  {
-                    "StatusCode": "200",
-                    "ResponseParameters": {
-                      "method.response.header.Access-Control-Allow-Origin": "'*'",
-                      "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent,X-Amzn-Trace-Id'",
-                      "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,DELETE,PUT,GET'"
-                    },
-                    "ResponseTemplates": {
-                      "application/json": ""
-                    }
-                  }
-                ]
-              },
-              "ResourceId": {
-                "Ref": "ApiGatewayResourceItemsIdVar"
-              },
-              "RestApiId": {
-                "Ref": "ApiGatewayRestApi"
-              }
-            }
-          },
-          "ApiGatewayMethodItemsPost": {
-            "Type": "AWS::ApiGateway::Method",
-            "Properties": {
-              "HttpMethod": "POST",
-              "RequestParameters": {},
-              "ResourceId": {
-                "Ref": "ApiGatewayResourceItems"
-              },
-              "RestApiId": {
-                "Ref": "ApiGatewayRestApi"
-              },
-              "ApiKeyRequired": false,
-              "AuthorizationType": "NONE",
-              "Integration": {
-                "IntegrationHttpMethod": "POST",
-                "Type": "AWS_PROXY",
-                "Uri": {
-                  "Fn::Join": [
-                    "",
-                    [
-                      "arn:",
-                      {
-                        "Ref": "AWS::Partition"
-                      },
-                      ":apigateway:",
-                      {
-                        "Ref": "AWS::Region"
-                      },
-                      ":lambda:path/2015-03-31/functions/",
-                      {
-                        "Fn::GetAtt": [
-                          "CreateItemLambdaFunction",
-                          "Arn"
-                        ]
-                      },
-                      "/invocations"
-                    ]
-                  ]
-                }
-              },
-              "MethodResponses": []
-            },
-            "DependsOn": [
-              "CreateItemLambdaPermissionApiGateway"
-            ]
           },
           "ApiGatewayMethodItemsGet": {
             "Type": "AWS::ApiGateway::Method",
@@ -661,145 +362,7 @@
               "GetItemsLambdaPermissionApiGateway"
             ]
           },
-          "ApiGatewayMethodItemsIdVarGet": {
-            "Type": "AWS::ApiGateway::Method",
-            "Properties": {
-              "HttpMethod": "GET",
-              "RequestParameters": {},
-              "ResourceId": {
-                "Ref": "ApiGatewayResourceItemsIdVar"
-              },
-              "RestApiId": {
-                "Ref": "ApiGatewayRestApi"
-              },
-              "ApiKeyRequired": false,
-              "AuthorizationType": "NONE",
-              "Integration": {
-                "IntegrationHttpMethod": "POST",
-                "Type": "AWS_PROXY",
-                "Uri": {
-                  "Fn::Join": [
-                    "",
-                    [
-                      "arn:",
-                      {
-                        "Ref": "AWS::Partition"
-                      },
-                      ":apigateway:",
-                      {
-                        "Ref": "AWS::Region"
-                      },
-                      ":lambda:path/2015-03-31/functions/",
-                      {
-                        "Fn::GetAtt": [
-                          "GetItemLambdaFunction",
-                          "Arn"
-                        ]
-                      },
-                      "/invocations"
-                    ]
-                  ]
-                }
-              },
-              "MethodResponses": []
-            },
-            "DependsOn": [
-              "GetItemLambdaPermissionApiGateway"
-            ]
-          },
-          "ApiGatewayMethodItemsIdVarPut": {
-            "Type": "AWS::ApiGateway::Method",
-            "Properties": {
-              "HttpMethod": "PUT",
-              "RequestParameters": {},
-              "ResourceId": {
-                "Ref": "ApiGatewayResourceItemsIdVar"
-              },
-              "RestApiId": {
-                "Ref": "ApiGatewayRestApi"
-              },
-              "ApiKeyRequired": false,
-              "AuthorizationType": "NONE",
-              "Integration": {
-                "IntegrationHttpMethod": "POST",
-                "Type": "AWS_PROXY",
-                "Uri": {
-                  "Fn::Join": [
-                    "",
-                    [
-                      "arn:",
-                      {
-                        "Ref": "AWS::Partition"
-                      },
-                      ":apigateway:",
-                      {
-                        "Ref": "AWS::Region"
-                      },
-                      ":lambda:path/2015-03-31/functions/",
-                      {
-                        "Fn::GetAtt": [
-                          "UpdateItemLambdaFunction",
-                          "Arn"
-                        ]
-                      },
-                      "/invocations"
-                    ]
-                  ]
-                }
-              },
-              "MethodResponses": []
-            },
-            "DependsOn": [
-              "UpdateItemLambdaPermissionApiGateway"
-            ]
-          },
-          "ApiGatewayMethodItemsIdVarDelete": {
-            "Type": "AWS::ApiGateway::Method",
-            "Properties": {
-              "HttpMethod": "DELETE",
-              "RequestParameters": {},
-              "ResourceId": {
-                "Ref": "ApiGatewayResourceItemsIdVar"
-              },
-              "RestApiId": {
-                "Ref": "ApiGatewayRestApi"
-              },
-              "ApiKeyRequired": false,
-              "AuthorizationType": "NONE",
-              "Integration": {
-                "IntegrationHttpMethod": "POST",
-                "Type": "AWS_PROXY",
-                "Uri": {
-                  "Fn::Join": [
-                    "",
-                    [
-                      "arn:",
-                      {
-                        "Ref": "AWS::Partition"
-                      },
-                      ":apigateway:",
-                      {
-                        "Ref": "AWS::Region"
-                      },
-                      ":lambda:path/2015-03-31/functions/",
-                      {
-                        "Fn::GetAtt": [
-                          "DeleteItemLambdaFunction",
-                          "Arn"
-                        ]
-                      },
-                      "/invocations"
-                    ]
-                  ]
-                }
-              },
-              "MethodResponses": []
-            },
-            "DependsOn": [
-              "DeleteItemLambdaPermissionApiGateway"
-            ]
-          },
-          "ApiGatewayDeployment1758645556303": {
+          "ApiGatewayDeployment1758698070011": {
             "Type": "AWS::ApiGateway::Deployment",
             "Properties": {
               "RestApiId": {
@@ -809,50 +372,8 @@
             },
             "DependsOn": [
               "ApiGatewayMethodItemsOptions",
-              "ApiGatewayMethodItemsIdVarOptions",
-              "ApiGatewayMethodItemsPost",
-              "ApiGatewayMethodItemsGet",
-              "ApiGatewayMethodItemsIdVarGet",
-              "ApiGatewayMethodItemsIdVarPut",
-              "ApiGatewayMethodItemsIdVarDelete"
+              "ApiGatewayMethodItemsGet"
             ]
-          },
-          "CreateItemLambdaPermissionApiGateway": {
-            "Type": "AWS::Lambda::Permission",
-            "Properties": {
-              "FunctionName": {
-                "Fn::GetAtt": [
-                  "CreateItemLambdaFunction",
-                  "Arn"
-                ]
-              },
-              "Action": "lambda:InvokeFunction",
-              "Principal": "apigateway.amazonaws.com",
-              "SourceArn": {
-                "Fn::Join": [
-                  "",
-                  [
-                    "arn:",
-                    {
-                      "Ref": "AWS::Partition"
-                    },
-                    ":execute-api:",
-                    {
-                      "Ref": "AWS::Region"
-                    },
-                    ":",
-                    {
-                      "Ref": "AWS::AccountId"
-                    },
-                    ":",
-                    {
-                      "Ref": "ApiGatewayRestApi"
-                    },
-                    "/*/*"
-                  ]
-                ]
-              }
-            }
           },
           "GetItemsLambdaPermissionApiGateway": {
             "Type": "AWS::Lambda::Permission",
@@ -860,117 +381,6 @@
               "FunctionName": {
                 "Fn::GetAtt": [
                   "GetItemsLambdaFunction",
-                  "Arn"
-                ]
-              },
-              "Action": "lambda:InvokeFunction",
-              "Principal": "apigateway.amazonaws.com",
-              "SourceArn": {
-                "Fn::Join": [
-                  "",
-                  [
-                    "arn:",
-                    {
-                      "Ref": "AWS::Partition"
-                    },
-                    ":execute-api:",
-                    {
-                      "Ref": "AWS::Region"
-                    },
-                    ":",
-                    {
-                      "Ref": "AWS::AccountId"
-                    },
-                    ":",
-                    {
-                      "Ref": "ApiGatewayRestApi"
-                    },
-                    "/*/*"
-                  ]
-                ]
-              }
-            }
-          },
-          "GetItemLambdaPermissionApiGateway": {
-            "Type": "AWS::Lambda::Permission",
-            "Properties": {
-              "FunctionName": {
-                "Fn::GetAtt": [
-                  "GetItemLambdaFunction",
-                  "Arn"
-                ]
-              },
-              "Action": "lambda:InvokeFunction",
-              "Principal": "apigateway.amazonaws.com",
-              "SourceArn": {
-                "Fn::Join": [
-                  "",
-                  [
-                    "arn:",
-                    {
-                      "Ref": "AWS::Partition"
-                    },
-                    ":execute-api:",
-                    {
-                      "Ref": "AWS::Region"
-                    },
-                    ":",
-                    {
-                      "Ref": "AWS::AccountId"
-                    },
-                    ":",
-                    {
-                      "Ref": "ApiGatewayRestApi"
-                    },
-                    "/*/*"
-                  ]
-                ]
-              }
-            }
-          },
-          "UpdateItemLambdaPermissionApiGateway": {
-            "Type": "AWS::Lambda::Permission",
-            "Properties": {
-              "FunctionName": {
-                "Fn::GetAtt": [
-                  "UpdateItemLambdaFunction",
-                  "Arn"
-                ]
-              },
-              "Action": "lambda:InvokeFunction",
-              "Principal": "apigateway.amazonaws.com",
-              "SourceArn": {
-                "Fn::Join": [
-                  "",
-                  [
-                    "arn:",
-                    {
-                      "Ref": "AWS::Partition"
-                    },
-                    ":execute-api:",
-                    {
-                      "Ref": "AWS::Region"
-                    },
-                    ":",
-                    {
-                      "Ref": "AWS::AccountId"
-                    },
-                    ":",
-                    {
-                      "Ref": "ApiGatewayRestApi"
-                    },
-                    "/*/*"
-                  ]
-                ]
-              }
-            }
-          },
-          "DeleteItemLambdaPermissionApiGateway": {
-            "Type": "AWS::Lambda::Permission",
-            "Properties": {
-              "FunctionName": {
-                "Fn::GetAtt": [
-                  "DeleteItemLambdaFunction",
                   "Arn"
                 ]
               },
@@ -1018,10 +428,7 @@
                   "KeyType": "HASH"
                 }
               ],
-              "BillingMode": "PAY_PER_REQUEST",
-              "StreamSpecification": {
-                "StreamViewType": "NEW_AND_OLD_IMAGES"
-              }
+              "BillingMode": "PAY_PER_REQUEST"
             }
           }
         },
@@ -1034,49 +441,13 @@
               "Name": "sls-crud-api-dev-ServerlessDeploymentBucketName"
             }
           },
-          "CreateItemLambdaFunctionQualifiedArn": {
-            "Description": "Current Lambda function version",
-            "Value": {
-              "Ref": "CreateItemLambdaVersionpMrx297UGs5ljnOCbb06rVmEn5lTArT7vrrGyfvI"
-            },
-            "Export": {
-              "Name": "sls-crud-api-dev-CreateItemLambdaFunctionQualifiedArn"
-            }
-          },
           "GetItemsLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "GetItemsLambdaVersionRf3KqQZd5uIzH447WEZ2NqSs2kClLjpUNG25GEK0BU"
+              "Ref": "GetItemsLambdaVersioner8UW3zYvuhyWSi5y6fPnKoKpd68c8KG1eAbeLevTE"
             },
             "Export": {
               "Name": "sls-crud-api-dev-GetItemsLambdaFunctionQualifiedArn"
-            }
-          },
-          "GetItemLambdaFunctionQualifiedArn": {
-            "Description": "Current Lambda function version",
-            "Value": {
-              "Ref": "GetItemLambdaVersionzcU8Ou4enYf7K00ZqyZEKK0o56bXME4Mo5nb0qYFE"
-            },
-            "Export": {
-              "Name": "sls-crud-api-dev-GetItemLambdaFunctionQualifiedArn"
-            }
-          },
-          "UpdateItemLambdaFunctionQualifiedArn": {
-            "Description": "Current Lambda function version",
-            "Value": {
-              "Ref": "UpdateItemLambdaVersionJaPtnGiNMWjD8b5Pmh65ZLR34qzLQPhCaGuCFwXHRvQ"
-            },
-            "Export": {
-              "Name": "sls-crud-api-dev-UpdateItemLambdaFunctionQualifiedArn"
-            }
-          },
-          "DeleteItemLambdaFunctionQualifiedArn": {
-            "Description": "Current Lambda function version",
-            "Value": {
-              "Ref": "DeleteItemLambdaVersionEpMBoWOzbpDZd6wUJHVX0dZ78kJrpocc10Sh9GK7k"
-            },
-            "Export": {
-              "Name": "sls-crud-api-dev-DeleteItemLambdaFunctionQualifiedArn"
             }
           },
           "ServiceEndpoint": {
@@ -1203,50 +574,8 @@
     ],
     "pluginsData": {},
     "functions": {
-      "createItem": {
-        "handler": "src/handlers/createItem.handler",
-        "events": [
-          {
-            "http": {
-              "path": "items",
-              "method": "post",
-              "cors": {
-                "origin": "*",
-                "methods": [
-                  "OPTIONS",
-                  "POST"
-                ],
-                "headers": [
-                  "Content-Type",
-                  "X-Amz-Date",
-                  "Authorization",
-                  "X-Api-Key",
-                  "X-Amz-Security-Token",
-                  "X-Amz-User-Agent",
-                  "X-Amzn-Trace-Id"
-                ],
-                "allowCredentials": false
-              },
-              "integration": "AWS_PROXY"
-            }
-          }
-        ],
-        "name": "crud-api-dev-createItem",
-        "package": {
-          "exclude": [
-            "node_modules/serverless-plugin-typescript"
-          ],
-          "include": [],
-          "patterns": []
-        },
-        "memory": 1024,
-        "timeout": 6,
-        "runtime": "nodejs18.x",
-        "vpc": {},
-        "versionLogicalId": "CreateItemLambdaVersionpMrx297UGs5ljnOCbb06rVmEn5lTArT7vrrGyfvI"
-      },
       "getItems": {
-        "handler": "src/handlers/getItems.handler",
+        "handler": "src/handlers/items/all.handler",
         "events": [
           {
             "http": {
@@ -1285,133 +614,7 @@
         "timeout": 6,
         "runtime": "nodejs18.x",
         "vpc": {},
-        "versionLogicalId": "GetItemsLambdaVersionRf3KqQZd5uIzH447WEZ2NqSs2kClLjpUNG25GEK0BU"
-      },
-      "getItem": {
-        "handler": "src/handlers/getItem.handler",
-        "events": [
-          {
-            "http": {
-              "path": "items/{id}",
-              "method": "get",
-              "cors": {
-                "origin": "*",
-                "methods": [
-                  "OPTIONS",
-                  "GET"
-                ],
-                "headers": [
-                  "Content-Type",
-                  "X-Amz-Date",
-                  "Authorization",
-                  "X-Api-Key",
-                  "X-Amz-Security-Token",
-                  "X-Amz-User-Agent",
-                  "X-Amzn-Trace-Id"
-                ],
-                "allowCredentials": false
-              },
-              "integration": "AWS_PROXY"
-            }
-          }
-        ],
-        "name": "crud-api-dev-getItem",
-        "package": {
-          "exclude": [
-            "node_modules/serverless-plugin-typescript"
-          ],
-          "include": [],
-          "patterns": []
-        },
-        "memory": 1024,
-        "timeout": 6,
-        "runtime": "nodejs18.x",
-        "vpc": {},
-        "versionLogicalId": "GetItemLambdaVersionzcU8Ou4enYf7K00ZqyZEKK0o56bXME4Mo5nb0qYFE"
-      },
-      "updateItem": {
-        "handler": "src/handlers/updateItem.handler",
-        "events": [
-          {
-            "http": {
-              "path": "items/{id}",
-              "method": "put",
-              "cors": {
-                "origin": "*",
-                "methods": [
-                  "OPTIONS",
-                  "PUT"
-                ],
-                "headers": [
-                  "Content-Type",
-                  "X-Amz-Date",
-                  "Authorization",
-                  "X-Api-Key",
-                  "X-Amz-Security-Token",
-                  "X-Amz-User-Agent",
-                  "X-Amzn-Trace-Id"
-                ],
-                "allowCredentials": false
-              },
-              "integration": "AWS_PROXY"
-            }
-          }
-        ],
-        "name": "crud-api-dev-updateItem",
-        "package": {
-          "exclude": [
-            "node_modules/serverless-plugin-typescript"
-          ],
-          "include": [],
-          "patterns": []
-        },
-        "memory": 1024,
-        "timeout": 6,
-        "runtime": "nodejs18.x",
-        "vpc": {},
-        "versionLogicalId": "UpdateItemLambdaVersionJaPtnGiNMWjD8b5Pmh65ZLR34qzLQPhCaGuCFwXHRvQ"
-      },
-      "deleteItem": {
-        "handler": "src/handlers/deleteItem.handler",
-        "events": [
-          {
-            "http": {
-              "path": "items/{id}",
-              "method": "delete",
-              "cors": {
-                "origin": "*",
-                "methods": [
-                  "OPTIONS",
-                  "DELETE"
-                ],
-                "headers": [
-                  "Content-Type",
-                  "X-Amz-Date",
-                  "Authorization",
-                  "X-Api-Key",
-                  "X-Amz-Security-Token",
-                  "X-Amz-User-Agent",
-                  "X-Amzn-Trace-Id"
-                ],
-                "allowCredentials": false
-              },
-              "integration": "AWS_PROXY"
-            }
-          }
-        ],
-        "name": "crud-api-dev-deleteItem",
-        "package": {
-          "exclude": [
-            "node_modules/serverless-plugin-typescript"
-          ],
-          "include": [],
-          "patterns": []
-        },
-        "memory": 1024,
-        "timeout": 6,
-        "runtime": "nodejs18.x",
-        "vpc": {},
-        "versionLogicalId": "DeleteItemLambdaVersionEpMBoWOzbpDZd6wUJHVX0dZ78kJrpocc10Sh9GK7k"
+        "versionLogicalId": "GetItemsLambdaVersioner8UW3zYvuhyWSi5y6fPnKoKpd68c8KG1eAbeLevTE"
       }
     },
     "resources": {
@@ -1432,10 +635,7 @@
                 "KeyType": "HASH"
               }
             ],
-            "BillingMode": "PAY_PER_REQUEST",
-            "StreamSpecification": {
-              "StreamViewType": "NEW_AND_OLD_IMAGES"
-            }
+            "BillingMode": "PAY_PER_REQUEST"
           }
         }
       },
@@ -1467,7 +667,7 @@
     "artifact": "C:\\Users\\Sillar\\Documents\\work\\ChristianCoding\\serverless-guru\\backend\\.build\\.serverless\\crud-api.zip"
   },
   "package": {
-    "artifactDirectoryName": "serverless/crud-api/dev/1758645587157-2025-09-23T16:39:47.157Z",
+    "artifactDirectoryName": "serverless/crud-api/dev/1758698097649-2025-09-24T07:14:57.649Z",
     "artifact": "crud-api.zip"
   }
 }
