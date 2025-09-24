@@ -2,7 +2,43 @@
 
 ## 🖥️ Backend: Serverless REST API (AWS)
 
-### 🚀 Tech Stack & Architecture
+### � Project Structure
+
+```
+backend/
+  package.json
+  serverless.yml
+  tsconfig.json
+  webpack.config.js
+  scripts/
+  src/
+    config/
+      index.ts
+    handlers/
+      auth/
+        authorizer.ts
+        getCurrentUser.ts
+        signIn.ts
+        signUp.ts
+      items/
+        all.ts
+        create.ts
+        delete.ts
+        get.ts
+        list.ts
+        update.ts
+    libs/
+      apiGateway.ts
+      dynamoDB.ts
+    types/
+      auth.ts
+      item.ts
+    utils/
+      dynamodb.ts
+  tests/
+```
+
+### �🚀 Tech Stack & Architecture
 
 - **Node.js + TypeScript**
 - **Serverless Framework** for Infrastructure as Code (IAC)
@@ -19,6 +55,16 @@
 - **CRUD Lambdas**:
   - Create, Read (single & all), Update, Delete items
   - No direct API Gateway → DynamoDB proxy; all logic in Lambda
+  - Endpoints:<br/>
+    GET - https://byit9b38a0.execute-api.us-west-1.amazonaws.com/dev/items/all<br/>
+    POST - https://byit9b38a0.execute-api.us-west-1.amazonaws.com/dev/auth/signup<br/>
+    POST - https://byit9b38a0.execute-api.us-west-1.amazonaws.com/dev/auth/signin<br/>
+    GET - https://byit9b38a0.execute-api.us-west-1.amazonaws.com/dev/auth/me<br/>
+    POST - https://byit9b38a0.execute-api.us-west-1.amazonaws.com/dev/items<br/>
+    GET - https://byit9b38a0.execute-api.us-west-1.amazonaws.com/dev/items/{id}<br/>
+    GET - https://byit9b38a0.execute-api.us-west-1.amazonaws.com/dev/items<br/>
+    PUT - https://byit9b38a0.execute-api.us-west-1.amazonaws.com/dev/items/{id}<br/>
+    DELETE - https://byit9b38a0.execute-api.us-west-1.amazonaws.com/dev/items/{id}<br/>
 - **Authentication**:
   - Cognito User Pool & Client for user management
   - Custom authorizer Lambda for protected routes
@@ -41,6 +87,52 @@
 ---
 
 ## 🌐 Frontend: React Application
+
+### 📂 Project Structure
+
+```
+frontend/
+  public/
+    index.html
+  src/
+    App.tsx
+    declarations.d.ts
+    index.css
+    index.tsx
+    material-tailwind.d.ts
+    assets/
+      svg/
+        check.svg
+        close.svg
+        error.svg
+        logout.svg
+        refresh.svg
+    components/
+      Dashboard.tsx
+      ItemForm.tsx
+      ItemList.tsx
+      LoadingSpinner.tsx
+      Modal.tsx
+      ProductCard.tsx
+      SignInForm.tsx
+      SignUpForm.tsx
+    config/
+      index.ts
+    contexts/
+      AuthContext.tsx
+    services/
+      api.ts
+      auth.ts
+    types/
+      auth.ts
+      item.ts
+  eslint.config.js
+  package.json
+  postcss.config.js
+  tailwind.config.js
+  tsconfig.json
+  webpack.config.js
+```
 
 ### ⚛️ Tech Stack & Architecture
 
