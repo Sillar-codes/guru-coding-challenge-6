@@ -1,40 +1,66 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 import { DeleteCommand, GetCommand } from '@aws-sdk/lib-dynamodb';
 import { ddbDocClient } from '../../libs/dynamoDB';
-import { successResponse, errorResponse } from '../../libs/apiGateway';
-import { TABLE_NAME } from '../../config';
+
+const successResponse = <T>(body: T, statusCode: number = 200): APIGatewayProxyResult => {
+  return {
+    statusCode,
+    headers: {
+      'Access-Control-Allow-Origin': 'http://localhost:3000',
+      'Access-Control-Allow-Credentials': false,
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+      'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(body),
+  };
+}
+
+const errorResponse = (message: string, statusCode: number = 500): APIGatewayProxyResult => {
+  return {
+    statusCode,
+    headers: {
+        'Access-Control-Allow-Origin': 'http://localhost:3000',
+        'Access-Control-Allow-Credentials': false,
+        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+        'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+        'Content-Type': 'application/json'
+    },
+    body: message,
+  };
+}
 
 export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   try {
     const userId = event.requestContext.authorizer?.claims?.sub;
     
     if (!userId) {
-      return errorResponse('Unauthorized', 'User not authenticated', 401);
+      return errorResponse('User not authenticated', 401);
     }
 
     const itemId = event.pathParameters?.id;
 
     if (!itemId) {
-      return errorResponse('ValidationError', 'Item ID is required', 400);
+      return errorResponse('Item ID is required', 400);
     }
 
     // First, verify the item exists and belongs to the user
     const getResult = await ddbDocClient.send(new GetCommand({
-      TableName: TABLE_NAME,
+      TableName: process.env.TABLE_NAME,
       Key: { itemId },
     }));
 
     if (!getResult.Item) {
-      return errorResponse('NotFound', 'Item not found', 404);
+      return errorResponse('Item not found', 404);
     }
 
     const existingItem = getResult.Item as any;
     if (existingItem.userId !== userId) {
-      return errorResponse('Forbidden', 'Access denied to this item', 403);
+      return errorResponse('Access denied to this item', 403);
     }
 
     await ddbDocClient.send(new DeleteCommand({
-      TableName: TABLE_NAME,
+      TableName: process.env.TABLE_NAME,
       Key: { itemId },
     }));
 
@@ -44,6 +70,6 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
     });
   } catch (error) {
     console.error('Error deleting item:', error);
-    return errorResponse('InternalError', (error as Error).message);
+    return errorResponse((error as Error).message);
   }
 };

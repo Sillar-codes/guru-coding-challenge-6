@@ -1,20 +1,46 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 import { QueryCommand } from '@aws-sdk/lib-dynamodb';
 import { ddbDocClient } from '../../libs/dynamoDB';
-import { successResponse, errorResponse } from '../../libs/apiGateway';
 import { Item } from '../../types/item';
-import { TABLE_NAME } from '../../config';
+
+const successResponse = <T>(body: T, statusCode: number = 200): APIGatewayProxyResult => {
+  return {
+    statusCode,
+    headers: {
+      'Access-Control-Allow-Origin': 'http://localhost:3000',
+      'Access-Control-Allow-Credentials': false,
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+      'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(body),
+  };
+}
+
+const errorResponse = (message: string, statusCode: number = 500): APIGatewayProxyResult => {
+  return {
+    statusCode,
+    headers: {
+        'Access-Control-Allow-Origin': 'http://localhost:3000',
+        'Access-Control-Allow-Credentials': false,
+        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+        'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+        'Content-Type': 'application/json'
+    },
+    body: message,
+  };
+}
 
 export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   try {
     const userId = event.requestContext.authorizer?.claims?.sub;
     
     if (!userId) {
-      return errorResponse('Unauthorized', 'User not authenticated', 401);
+      return errorResponse('User not authenticated', 401);
     }
 
     const result = await ddbDocClient.send(new QueryCommand({
-      TableName: TABLE_NAME,
+      TableName: process.env.TABLE_NAME,
       IndexName: 'userId-index',
       KeyConditionExpression: 'userId = :userId',
       ExpressionAttributeValues: {
@@ -25,6 +51,6 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
     return successResponse<Item[]>(result.Items as Item[] || []);
   } catch (error) {
     console.error('Error listing items:', error);
-    return errorResponse('InternalError', (error as Error).message);
+    return errorResponse((error as Error).message);
   }
 };

@@ -1,5 +1,10 @@
 frontend/.env
 frontend/build
 frontend/node_modules
+frontend/dist
+frontend/package-lock.json
 backend/node_modules
 backend/.env
+backend/dist
+backend/.serverless
+backend/package-lock.json

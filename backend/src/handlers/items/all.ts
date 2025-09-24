@@ -1,7 +1,35 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 import { ScanCommand } from '@aws-sdk/lib-dynamodb';
 import { ddbDocClient } from '../../utils/dynamodb';
-import { Item, ApiResponse } from '../../types/item';
+import { Item } from '../../types/item';
+
+const successResponse = <T>(body: T, statusCode: number = 200): APIGatewayProxyResult => {
+  return {
+    statusCode,
+    headers: {
+      'Access-Control-Allow-Origin': 'http://localhost:3000',
+      'Access-Control-Allow-Credentials': false,
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+      'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(body),
+  };
+}
+
+const errorResponse = (message: string, statusCode: number = 500): APIGatewayProxyResult => {
+  return {
+    statusCode,
+    headers: {
+        'Access-Control-Allow-Origin': 'http://localhost:3000',
+        'Access-Control-Allow-Credentials': false,
+        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+        'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+        'Content-Type': 'application/json'
+    },
+    body: message,
+  };
+}
 
 export const handler = async (_: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   try {
@@ -12,23 +40,9 @@ export const handler = async (_: APIGatewayProxyEvent): Promise<APIGatewayProxyR
     const result = await ddbDocClient.send(command);
     const items = result.Items as Item[] || [];
 
-    return {
-      statusCode: 200,
-      body: JSON.stringify({
-        statusCode: 200,
-        body: items,
-        message: 'Items retrieved successfully'
-      } as ApiResponse<Item[]>),
-    };
+    return successResponse(items);
   } catch (error) {
     console.error('Error retrieving items:', error);
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ 
-        message: 'Internal server error',
-        statusCode: 500,
-        body: (error as Error).message
-      } as ApiResponse<string>),
-    };
+    return errorResponse((error as Error).message);
   }
 };

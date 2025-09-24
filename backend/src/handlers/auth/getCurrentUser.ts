@@ -1,41 +1,49 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
-import { CognitoIdentityProviderClient, AdminGetUserCommand } from '@aws-sdk/client-cognito-identity-provider';
-import { successResponse, errorResponse } from '../../libs/apiGateway';
-import { User } from '../../types/auth';
-import { REGION, USER_POOL_ID } from '../../config';
 
-const cognitoClient = new CognitoIdentityProviderClient({ 
-  region: REGION 
-});
+const successResponse = <T>(body: T, statusCode: number = 200): APIGatewayProxyResult => {
+  return {
+    statusCode,
+    headers: {
+      'Access-Control-Allow-Origin': 'http://localhost:3000',
+      'Access-Control-Allow-Credentials': false,
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+      'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(body),
+  };
+}
+
+const errorResponse = (message: string, statusCode: number = 500): APIGatewayProxyResult => {
+  return {
+    statusCode,
+    headers: {
+        'Access-Control-Allow-Origin': 'http://localhost:3000',
+        'Access-Control-Allow-Credentials': false,
+        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+        'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+        'Content-Type': 'application/json'
+    },
+    body: message,
+  };
+}
 
 export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   try {
-    const userId = event.requestContext.authorizer?.claims?.sub;
-    const email = event.requestContext.authorizer?.claims?.email;
-    const name = event.requestContext.authorizer?.claims?.name;
+    // Get user data from authorizer context (no need for additional Cognito calls)
+    const requestContext = event.requestContext;
+    const authorizer = requestContext.authorizer;
     
-    if (!userId) {
-      return errorResponse('Unauthorized', 'User not authenticated', 401);
-    }
-
-    // Get additional user info from Cognito
-    const getUserCommand = new AdminGetUserCommand({
-      UserPoolId: USER_POOL_ID,
-      Username: email,
-    });
-
-    const userInfo = await cognitoClient.send(getUserCommand);
-
-    const user: User = {
-      userId,
-      email: email || '',
-      name: name || '',
-      emailVerified: userInfo.UserAttributes?.find(attr => attr.Name === 'email_verified')?.Value === 'true',
+    const userData = {
+      userId: authorizer?.userId,
+      email: authorizer?.email,
+      name: authorizer?.name,
+      email_verified: authorizer?.email_verified === 'true'
     };
 
-    return successResponse(user);
+    return successResponse(userData);
   } catch (error) {
     console.error('Error getting current user:', error);
-    return errorResponse('InternalError', 'Failed to get user information');
+    return errorResponse('Failed to get user data');
   }
 };
