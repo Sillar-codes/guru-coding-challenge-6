@@ -7,7 +7,7 @@ provider:
   runtime: nodejs18.x
   region: ${opt:region, 'us-west-1'}
   stage: ${opt:stage, 'dev'}
-  allowedOrigin: "http://localhost:3000"
+  allowedOrigin: "http://62.72.6.16:3000"
   environment:
     TABLE_NAME: !Ref ItemsTable
     STAGE: ${self:provider.stage}
