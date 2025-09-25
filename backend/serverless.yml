@@ -7,12 +7,14 @@ provider:
   runtime: nodejs18.x
   region: ${opt:region, 'us-west-1'}
   stage: ${opt:stage, 'dev'}
+  allowedOrigin: "http://localhost:3000"
   environment:
     TABLE_NAME: !Ref ItemsTable
     STAGE: ${self:provider.stage}
     REGION: ${self:provider.region}
     USER_POOL_ID: { Ref: CognitoUserPool }
     USER_POOL_CLIENT_ID: { Ref: CognitoUserPoolClient }
+    ALLOWED_ORIGIN: ${self:provider.allowedOrigin}
   iam:
     role:
       statements:
@@ -26,6 +28,10 @@ provider:
             - dynamodb:DeleteItem
           Resource:
             - !GetAtt ItemsTable.Arn
+            - Fn::Join:
+                - "/"
+                - - !GetAtt ItemsTable.Arn
+                  - index/*
         - Effect: Allow
           Action:
             - cognito-idp:AdminInitiateAuth
@@ -52,10 +58,19 @@ resources:
         AttributeDefinitions:
           - AttributeName: itemId
             AttributeType: S
+          - AttributeName: userId
+            AttributeType: S
         KeySchema:
           - AttributeName: itemId
             KeyType: HASH
         BillingMode: PAY_PER_REQUEST
+        GlobalSecondaryIndexes:
+          - IndexName: userId-index
+            KeySchema:
+              - AttributeName: userId
+                KeyType: HASH
+            Projection:
+              ProjectionType: ALL
 
     CognitoUserPool:
       Type: AWS::Cognito::UserPool
@@ -128,9 +143,7 @@ functions:
           path: auth/me
           method: get
           cors: true
-          authorizer:
-            name: authorizer
-            type: request
+          authorizer: authAuthorizer
 
   createItem:
     handler: src/handlers/items/create.handler
@@ -139,6 +152,7 @@ functions:
           path: items
           method: post
           cors: true
+          authorizer: authAuthorizer
 
   getItem:
     handler: src/handlers/items/get.handler
@@ -147,6 +161,7 @@ functions:
           path: items/{id}
           method: get
           cors: true
+          authorizer: authAuthorizer
 
   listItems:
     handler: src/handlers/items/list.handler
@@ -155,6 +170,7 @@ functions:
           path: items
           method: get
           cors: true
+          authorizer: authAuthorizer
 
   updateItem:
     handler: src/handlers/items/update.handler
@@ -163,6 +179,7 @@ functions:
           path: items/{id}
           method: put
           cors: true
+          authorizer: authAuthorizer
 
   deleteItem:
     handler: src/handlers/items/delete.handler
@@ -171,8 +188,9 @@ functions:
           path: items/{id}
           method: delete
           cors: true
+          authorizer: authAuthorizer
 
-  authorizer:
+  authAuthorizer:
     handler: src/handlers/auth/authorizer.handler
 
 plugins:

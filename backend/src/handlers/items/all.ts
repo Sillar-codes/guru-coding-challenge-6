@@ -7,7 +7,7 @@ const successResponse = <T>(body: T, statusCode: number = 200): APIGatewayProxyR
   return {
     statusCode,
     headers: {
-      'Access-Control-Allow-Origin': 'http://localhost:3000',
+      'Access-Control-Allow-Origin': process.env.ALLOWED_ORIGIN!,
       'Access-Control-Allow-Credentials': false,
       'Access-Control-Allow-Headers': 'Content-Type, Authorization',
       'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
@@ -21,7 +21,7 @@ const errorResponse = (message: string, statusCode: number = 500): APIGatewayPro
   return {
     statusCode,
     headers: {
-        'Access-Control-Allow-Origin': 'http://localhost:3000',
+        'Access-Control-Allow-Origin': process.env.ALLOWED_ORIGIN!,
         'Access-Control-Allow-Credentials': false,
         'Access-Control-Allow-Headers': 'Content-Type, Authorization',
         'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
