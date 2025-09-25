@@ -7,4 +7,3 @@ backend/node_modules
 backend/.env
 backend/dist
 backend/.serverless
-backend/package-lock.json

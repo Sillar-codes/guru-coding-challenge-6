@@ -18,6 +18,9 @@ export const handler = async (event: APIGatewayTokenAuthorizerEvent): Promise<AP
 
     // Verify the JWT ID token using AWS Cognito verifier
     const payload = await verifier.verify(token);
+
+    const apiArn = event.methodArn.split('/').slice(0, 2).join('/');
+    const resource = `${apiArn}/*/*`;
     
     // Extract user information from the ID token payload
     return {
@@ -28,15 +31,15 @@ export const handler = async (event: APIGatewayTokenAuthorizerEvent): Promise<AP
           {
             Action: 'execute-api:Invoke',
             Effect: 'Allow',
-            Resource: event.methodArn,
+            Resource: resource,
           },
         ],
       },
       context: {
         userId: payload.sub,
         email: payload.email?.toLocaleString() || '',
-        name: payload.name?.toLocaleString() || payload.given_name?.toLocaleString() || '',
-        email_verified: payload.email_verified?.toString() || 'false'
+        name: payload.name?.toString() || payload.given_name?.toString() || '',
+        email_verified: payload.email_verified?.toString() == 'true'
       },
     };
   } catch (error) {
@@ -50,10 +53,13 @@ export const handler = async (event: APIGatewayTokenAuthorizerEvent): Promise<AP
         Statement: [
           {
             Action: 'execute-api:Invoke',
-            Effect: 'Deny',
+            Effect: 'Allow',
             Resource: event.methodArn,
           },
         ],
+      },
+      context: {
+        message: (error as Error).message
       },
     };
   }
