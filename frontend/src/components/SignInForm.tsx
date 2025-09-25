@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
-import { useAuth } from '../contexts/AuthContext'
 import { isAxiosError } from 'axios'
+
+import { useAuth } from '../contexts/AuthContext'
 
 export const SignInForm: React.FC = () => {
   const [email, setEmail] = useState('')
@@ -27,6 +28,7 @@ export const SignInForm: React.FC = () => {
     }
 
     container.addEventListener('mousemove', handleMouseMove)
+
     return () => container.removeEventListener('mousemove', handleMouseMove)
   }, [])
 
