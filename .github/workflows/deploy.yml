@@ -71,8 +71,8 @@ jobs:
           cd backend
           npx tsc --noEmit --skipLibCheck
 
-  deploy-dev:
-    name: Deploy to Development
+  deploy-serverless-apis:
+    name: Deploy Serverless REST APIs
     runs-on: ubuntu-latest
     needs: [test]
     if: github.ref == 'refs/heads/main'
@@ -125,3 +125,44 @@ jobs:
           sleep 30
           # Test the API endpoint
           curl -f https://byit9b38a0.execute-api.us-west-1.amazonaws.com/dev/items/all || exit 1
+
+  deploy-frontend:
+    name: Deploy React Frontend
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install sshpass
+        run: sudo apt-get install -y sshpass
+
+      - name: Set up SSH key for deployment
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.VPS_IP }} > ~/.ssh/known_hosts
+          echo "StrictHostKeyChecking no" >> ~/.ssh/config
+
+      - name: Debugging
+        run: |
+          echo "VPS_IP: ${{ secrets.VPS_IP }}"
+          echo "VPS_USERNAME: ${{ secrets.VPS_USERNAME }}"
+          ls -la ~/.ssh
+          cat ~/.ssh/known_hosts
+
+      - name: Deploy to Server
+        run: |
+          ssh -o "StrictHostKeyChecking no" -p 22 ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_IP }} << 'EOF'
+
+            cd /root/guru-coding-challenge-6 || exit 1
+            git pull --rebase origin main
+
+            pm2 delete frontend
+            npm run build
+            npm start
+            pm2 start "npm start" --name "frontend"
+
+          EOF
