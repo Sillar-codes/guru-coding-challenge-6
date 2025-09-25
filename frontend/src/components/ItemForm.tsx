@@ -40,12 +40,14 @@ export const ItemForm: React.FC<ItemFormProps> = ({ item, onSubmit, onCancel, is
     // Validate required fields for create
     if (!isEditing && (!formData.name || !formData.description || !formData.category || formData.price <= 0)) {
       alert('Please fill all required fields')
+
       return
     }
 
     // Validate at least one field for update
     if (isEditing && !formData.name && !formData.description && !formData.category && formData.price <= 0) {
       alert('Please update at least one field')
+
       return
     }
 
@@ -62,8 +64,6 @@ export const ItemForm: React.FC<ItemFormProps> = ({ item, onSubmit, onCancel, is
 
   return (
     <form onSubmit={handleSubmit} className='bg-white p-6 rounded-lg shadow-md'>
-      <h2 className='text-2xl font-bold mb-4'>{isEditing ? 'Edit Product' : 'Create New Product'}</h2>
-
       <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
         <div>
           <label className='block text-sm font-medium text-gray-700 mb-2'>Name *</label>
@@ -102,7 +102,7 @@ export const ItemForm: React.FC<ItemFormProps> = ({ item, onSubmit, onCancel, is
           <input
             type='number'
             name='price'
-            value={formData.price}
+            value={Number(formData.price).toString()}
             onChange={handleChange}
             min='0'
             step='0.01'

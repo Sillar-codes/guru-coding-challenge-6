@@ -2,7 +2,6 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 import { useNavigate } from 'react-router-dom'
 import { authService } from '../services/auth'
 import { User, AuthContextType } from '../types/auth'
-import { isAxiosError } from 'axios'
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
@@ -81,5 +80,6 @@ export const useAuth = (): AuthContextType => {
   if (context === undefined) {
     throw new Error('useAuth must be used within an AuthProvider')
   }
+
   return context
 }

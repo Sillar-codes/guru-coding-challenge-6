@@ -52,6 +52,11 @@ export const Dashboard: React.FC = () => {
     }
   }
 
+  const handleNewProduct = () => {
+    setEditingItem(null)
+    setShowFormModal(true)
+  }
+
   const handleCreateItem = async (data: ItemRequest): Promise<void> => {
     try {
       const newItem = await itemService.createItem(data)
@@ -118,7 +123,6 @@ export const Dashboard: React.FC = () => {
 
   const handleCancel = (): void => {
     setShowFormModal(false)
-    setEditingItem(null)
   }
 
   const handleRefresh = (): void => {
@@ -304,7 +308,7 @@ export const Dashboard: React.FC = () => {
             <p className='text-gray-600 mt-2 text-lg'>Manage your products with ease and style</p>
           </div>
           <button
-            onClick={() => setShowFormModal(true)}
+            onClick={handleNewProduct}
             className='relative bg-gradient-to-r from-green-500 to-emerald-600 text-white px-8 py-4 rounded-2xl hover:from-green-600 hover:to-emerald-700 transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center space-x-3 font-semibold group overflow-hidden'
           >
             <div className='absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12 transform translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000' />
