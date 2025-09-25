@@ -1,8 +1,14 @@
-# 🏆 Project Inventory Management
+# 🏆 Product Inventory Management
+
+<p align="center">
+  <img src="docs/screenshots/frontend.png" alt="Prodcut Inventory" width="100%" />
+  <br>
+  <i>Product Inventory Manager - http://62.72.6.16:3000</i>
+</p>
 
 ## 🖥️ Backend: Serverless REST API (AWS)
 
-### � Project Structure
+### 📂 Project Structure
 
 ```
 backend/
@@ -38,7 +44,7 @@ backend/
   tests/
 ```
 
-### �🚀 Tech Stack & Architecture
+### 🚀 Tech Stack & Architecture
 
 - **Node.js + TypeScript**
 - **Serverless Framework** for Infrastructure as Code (IAC)
