@@ -4,12 +4,12 @@
     "description": "Serverless CRUD API with TypeScript and Cognito",
     "type": "commonjs",
     "scripts": {
-        "dev": "ts-node-dev --respawn --transpile-only src/local.ts",
+        "dev": "serverless offline",
         "build": "tsc",
-        "deploy": "npm run build && serverless deploy",
         "deploy:dev": "npm run build && serverless deploy --stage dev",
         "deploy:prod": "npm run build && serverless deploy --stage prod",
-        "remove": "serverless remove"
+        "test": "jest",
+        "type-check": "tsc --noEmit"
     },
     "devDependencies": {
         "@types/aws-lambda": "^8.10.119",
