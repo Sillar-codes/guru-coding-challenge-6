@@ -198,19 +198,3 @@ frontend/
 - **No direct DynamoDB proxy from API Gateway**
 
 ---
-
-## 📝 Optional Enhancements
-
-- 🧪 Unit/integration/load tests
-- 🗂️ YAML file organization
-- 🐚 Bash scripts for deployment
-- 🏢 Business case adaptation
-- 📹 Loom video walkthrough
-
----
-
-## 🏁 Summary
-
-Your project is a full-stack, cloud-native CRUD app with secure authentication, automated infrastructure, and modern UI. It’s designed for scalability, maintainability, and developer productivity.
-
-If you want a README or visual documentation with screenshots, let me know!
