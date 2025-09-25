@@ -6,6 +6,12 @@
   <i>Product Inventory Manager - http://62.72.6.16:3000</i>
 </p>
 
+<p align="center">
+  <img src="docs/screenshots/workflow.png" alt="Github CI/CD Pipeline" width="100%" />
+  <br>
+  <i>GitHub CI/CD Pipeline</i>
+</p>
+
 ## 🖥️ Backend: Serverless REST API (AWS)
 
 ### 📂 Project Structure
