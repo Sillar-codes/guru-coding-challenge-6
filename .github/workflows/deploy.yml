@@ -136,33 +136,56 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Install sshpass
-        run: sudo apt-get install -y sshpass
+      - name: Setup Node.js for frontend build
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+          cache-dependency-path: frontend/package-lock.json
 
-      - name: Set up SSH key for deployment
+      - name: Install frontend dependencies
+        run: |
+          cd frontend
+          npm ci
+
+      - name: Build frontend
+        run: |
+          cd frontend
+          npm run build
+
+      - name: Set up SSH deployment
         run: |
           mkdir -p ~/.ssh
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H ${{ secrets.VPS_IP }} > ~/.ssh/known_hosts
-          echo "StrictHostKeyChecking no" >> ~/.ssh/config
+          ssh-keyscan -H ${{ secrets.VPS_IP }} >> ~/.ssh/known_hosts
 
-      - name: Debugging
+      - name: Test SSH connection
         run: |
-          echo "VPS_IP: ${{ secrets.VPS_IP }}"
-          echo "VPS_USERNAME: ${{ secrets.VPS_USERNAME }}"
-          ls -la ~/.ssh
-          cat ~/.ssh/known_hosts
+          ssh -o BatchMode=yes -i ~/.ssh/id_rsa ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_IP }} "echo 'SSH connection successful'"
 
-      - name: Deploy to Server
+      - name: Deploy to VPS
         run: |
-          ssh -o "StrictHostKeyChecking no" -p 22 ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_IP }} << 'EOF'
+          # Copy built files to VPS
+          scp -i ~/.ssh/id_rsa -r frontend/build/* ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_IP }}:/var/www/html/
 
-            cd /root/guru-coding-challenge-6 || exit 1
-            git pull --rebase origin main
-
-            pm2 delete frontend
+          # Restart service via SSH
+          ssh -i ~/.ssh/id_rsa ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_IP }} << 'EOF'
+            # Navigate to your app directory
+            cd /root/guru-coding-challenge-6/frontend
+            
+            # Pull latest code
+            git pull origin main
+            
+            # Install dependencies
+            npm ci
+            
+            # Build the application on the server (or use the copied build)
             npm run build
-            pm2 start "npm start" --name "frontend"
-
+            
+            # Restart PM2 process
+            pm2 restart frontend || pm2 start "npm start" --name "frontend"
+            
+            # Save PM2 configuration
+            pm2 save
           EOF
