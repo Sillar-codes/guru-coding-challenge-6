@@ -163,7 +163,6 @@ jobs:
 
             pm2 delete frontend
             npm run build
-            npm start
             pm2 start "npm start" --name "frontend"
 
           EOF
